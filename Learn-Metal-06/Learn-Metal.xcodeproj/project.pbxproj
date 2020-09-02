@@ -14,6 +14,9 @@
 		6DA3FEE524F89FFC0054E319 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6DA3FEE424F89FFC0054E319 /* Assets.xcassets */; };
 		6DA3FEE824F89FFC0054E319 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6DA3FEE624F89FFC0054E319 /* LaunchScreen.storyboard */; };
 		6DA3FEEB24F89FFC0054E319 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DA3FEEA24F89FFC0054E319 /* main.m */; };
+		6DA3FEFB24FE71FC0054E319 /* test.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 6DA3FEFA24FE71FC0054E319 /* test.mp4 */; };
+		6DA3FEFE24FF68090054E319 /* AssetReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 6DA3FEFD24FF68080054E319 /* AssetReader.m */; };
+		6DA3FF0324FF809D0054E319 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 6DA3FF0224FF809D0054E319 /* Shaders.metal */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +32,11 @@
 		6DA3FEE724F89FFC0054E319 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6DA3FEE924F89FFC0054E319 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6DA3FEEA24F89FFC0054E319 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		6DA3FEFA24FE71FC0054E319 /* test.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = test.mp4; sourceTree = "<group>"; };
+		6DA3FEFC24FF68080054E319 /* AssetReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AssetReader.h; sourceTree = "<group>"; };
+		6DA3FEFD24FF68080054E319 /* AssetReader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AssetReader.m; sourceTree = "<group>"; };
+		6DA3FEFF24FF808C0054E319 /* ShaderTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderTypes.h; sourceTree = "<group>"; };
+		6DA3FF0224FF809D0054E319 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +69,11 @@
 		6DA3FED724F89FFA0054E319 /* Learn-Metal */ = {
 			isa = PBXGroup;
 			children = (
+				6DA3FEFA24FE71FC0054E319 /* test.mp4 */,
+				6DA3FEFC24FF68080054E319 /* AssetReader.h */,
+				6DA3FEFD24FF68080054E319 /* AssetReader.m */,
+				6DA3FEFF24FF808C0054E319 /* ShaderTypes.h */,
+				6DA3FF0224FF809D0054E319 /* Shaders.metal */,
 				6DA3FED824F89FFA0054E319 /* AppDelegate.h */,
 				6DA3FED924F89FFA0054E319 /* AppDelegate.m */,
 				6DA3FEDB24F89FFA0054E319 /* SceneDelegate.h */,
@@ -136,6 +149,7 @@
 				6DA3FEE824F89FFC0054E319 /* LaunchScreen.storyboard in Resources */,
 				6DA3FEE524F89FFC0054E319 /* Assets.xcassets in Resources */,
 				6DA3FEE324F89FFA0054E319 /* Main.storyboard in Resources */,
+				6DA3FEFB24FE71FC0054E319 /* test.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -146,6 +160,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6DA3FF0324FF809D0054E319 /* Shaders.metal in Sources */,
+				6DA3FEFE24FF68090054E319 /* AssetReader.m in Sources */,
 				6DA3FEE024F89FFA0054E319 /* ViewController.m in Sources */,
 				6DA3FEDA24F89FFA0054E319 /* AppDelegate.m in Sources */,
 				6DA3FEEB24F89FFC0054E319 /* main.m in Sources */,
