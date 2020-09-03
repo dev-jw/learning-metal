@@ -69,10 +69,11 @@
 }
 
 - (void)setupAssetReader {
-    NSURL *url = [[NSBundle mainBundle] URLForResource:@"test" withExtension:@"mp4"];
+    NSURL *url = [[NSBundle mainBundle] URLForResource:@"abc" withExtension:@"mov"];
     
     self.assetReader = [[AssetReader alloc] initWithUrl:url];
     
+    // _textureCacheRef的创建(通过CoreVideo提供给CPU/GPU高速缓存通道读取纹理数据)
     CVMetalTextureCacheCreate(NULL, NULL, self.mtkView.device, NULL, &_textureCacheRef);
 }
 
@@ -162,14 +163,14 @@
         
         id<MTLRenderCommandEncoder> encoder = [commandBuffer renderCommandEncoderWithDescriptor:renderPassDes];
         
-        [encoder setViewport:(MTLViewport){0.0,0.0, self.viewPortSize.x, self.viewPortSize.y , -1.0, 1.0;}];
-        
+        [encoder setViewport:(MTLViewport){0.0,0.0, self.viewPortSize.x, self.viewPortSize.y , -1.0, 1.0}];
+         
         [encoder setRenderPipelineState:self.renderPipelineState];
         
         [encoder setVertexBuffer:self.vertices offset:0 atIndex:VertexInputIndexVertices];
         
         // 设置纹理
-        [self setupTextureWithEncoder:commandEncoder buffer:sampleBuffer];
+        [self setupTextureWithEncoder:encoder buffer:sampleBuffer];
         
         [encoder setFragmentBuffer:self.convertMatrix offset:0 atIndex:FragmentInputIndexMatrix];
         
@@ -186,7 +187,77 @@
 - (void)setupTextureWithEncoder:(id<MTLRenderCommandEncoder>)encoder
                          buffer:(CMSampleBufferRef)CMSampleBufferRef
 {
+    CVPixelBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(CMSampleBufferRef);
     
+    id<MTLTexture> textureY = nil;
+    id<MTLTexture> textureUV = nil;
+    
+    {
+        // 返回像素缓冲区中给定索引处的平面宽度和高度
+        size_t width = CVPixelBufferGetWidthOfPlane(pixelBuffer, 0);
+        size_t height = CVPixelBufferGetHeightOfPlane(pixelBuffer, 0);
+
+        // 像素格式:普通格式，包含一个8位规范化的无符号整数组件。并不是 RGBA
+        MTLPixelFormat pixelFormat = MTLPixelFormatR8Unorm;
+
+        CVMetalTextureRef texture = NULL;
+
+        /* 根据视频像素缓存区 创建 Metal 纹理缓存区
+        CVReturn CVMetalTextureCacheCreateTextureFromImage(CFAllocatorRef allocator,
+        CVMetalTextureCacheRef textureCache,
+        CVImageBufferRef sourceImage,
+        CFDictionaryRef textureAttributes,
+        MTLPixelFormat pixelFormat,
+        size_t width,
+        size_t height,
+        size_t planeIndex,
+        CVMetalTextureRef  *textureOut);
+        
+        功能: 从现有图像缓冲区创建核心视频Metal纹理缓冲区。
+        参数1: allocator 内存分配器,默认kCFAllocatorDefault
+        参数2: textureCache 纹理缓存区对象
+        参数3: sourceImage 视频图像缓冲区
+        参数4: textureAttributes 纹理参数字典.默认为NULL
+        参数5: pixelFormat 图像缓存区数据的Metal 像素格式常量.注意如果MTLPixelFormatBGRA8Unorm和摄像头采集时设置的颜色格式不一致，则会出现图像异常的情况；
+        参数6: width,纹理图像的宽度（像素）
+        参数7: height,纹理图像的高度（像素）
+        参数8: planeIndex.如果图像缓冲区是平面的，则为映射纹理数据的平面索引。对于非平面图像缓冲区忽略。
+        参数9: textureOut,返回时，返回创建的Metal纹理缓冲区。
+        */
+        CVReturn status = CVMetalTextureCacheCreateTextureFromImage(NULL, self.textureCacheRef, pixelBuffer, NULL, pixelFormat, width, height, 0, &texture);
+
+        if (status == kCVReturnSuccess) {
+            textureY = CVMetalTextureGetTexture(texture);
+
+            CFRelease(texture);
+        }
+    }
+
+    {
+        size_t width = CVPixelBufferGetWidthOfPlane(pixelBuffer, 1);
+        size_t height = CVPixelBufferGetHeightOfPlane(pixelBuffer, 1);
+
+        // 具有两个8位归一化无符号整数成分的普通格式
+        MTLPixelFormat pixelFormat = MTLPixelFormatRG8Unorm;
+
+        CVMetalTextureRef texture = NULL;
+
+        CVReturn status = CVMetalTextureCacheCreateTextureFromImage(NULL, self.textureCacheRef, pixelBuffer, NULL, pixelFormat, width, height, 1, &texture);
+
+        if (status == kCVReturnSuccess) {
+            textureUV = CVMetalTextureGetTexture(texture);
+
+            CFRelease(texture);
+        }
+    }
+    
+    if (textureY != nil && textureUV != nil) {
+        [encoder setFragmentTexture:textureY atIndex:FragmentTextureIndexTextureY];
+        
+        [encoder setFragmentTexture:textureUV atIndex:FragmentTextureIndexTextureUV];
+    }
+ 
+    CFRelease(CMSampleBufferRef);
 }
 
 @end

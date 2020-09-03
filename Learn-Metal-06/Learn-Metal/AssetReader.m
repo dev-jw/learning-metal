@@ -71,7 +71,8 @@
 
 - (void)processWithAsset:(AVAsset *)asset {
     [lock lock];
-    
+    NSLog(@"processWithAsset");
+
     NSError *error = nil;
     
     /**< 创建 AVAssetReader */
@@ -86,7 +87,8 @@
      kCVPixelFormatType_32BGRA - kCVPixelBufferPixelFormatTypeKey.。
      */
     NSMutableDictionary *outputSettings = [NSMutableDictionary dictionary];
-    [outputSettings setObject:@(kCVPixelFormatType_420YpCbCr8BiPlanarFullRange) forKey:(id)kCVPixelBufferPixelFormatTypeKey];
+    [outputSettings setObject:@(kCVPixelFormatType_420YpCbCr8BiPlanarFullRange)
+                       forKey:(id)kCVPixelBufferPixelFormatTypeKey];
     
     /*
      assetReaderTrackOutputWithTrack:(AVAssetTrack *)track outputSettings:(nullable NSDictionary<NSString *, id> *)outputSettings
@@ -129,7 +131,7 @@
       并重新初始化它们
       */
     if (assetReader && assetReader.status == AVAssetReaderStatusCompleted) {
-        NSLog(@"customInit");
+        NSLog(@"setupAssetReader");
         readerVideoTrackOutput = nil;
         assetReader = nil;
         [self setupAssetReader];
